@@ -12,7 +12,7 @@ R2: 0.44
 RMSE: 234.01  
 R2: 0.81  
 #### Heat of Fusion:  
-RMSE: 51530.83
+RMSE: 51530.83  
 R2: 0.44
 #### Heat of Vaporization:  
 RMSE: 92181.32  
