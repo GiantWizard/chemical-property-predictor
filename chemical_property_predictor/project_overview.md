@@ -8,7 +8,8 @@
 #### Melting Point:  
 
 #### Boiling point:  
-
+RMSE: 234.01  
+R2: 0.81  
 #### Heat of Fusion:   
 #### Heat of Vaporization:  
 #### Critical Temperature:  
