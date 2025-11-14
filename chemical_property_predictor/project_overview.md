@@ -6,10 +6,9 @@
 ### Test results - 2D:
 
 #### Melting Point:  
-RMSE: 273.43  
-R2: 0.38  
-<img src="./plots/2D/melting_point.png"/>
+
 #### Boiling point:  
+
 #### Heat of Fusion:   
 #### Heat of Vaporization:  
 #### Critical Temperature:  
@@ -19,12 +18,26 @@ R2: 0.38
 ### Test results - 3D:
 
 #### Melting Point:  
+RMSE: 273.43  
+R2: 0.38  
 #### Boiling point:  
+RMSE: 39.85  
+R2: 0.87  
 #### Heat of Fusion:   
+RMSE: 54104.68  
+R2: 0.42  
 #### Heat of Vaporization:  
+RMSE: 90210.16  
+R2: 0.82  
 #### Critical Temperature:  
+RMSE: 30.27  
+R2: 0.93  
 #### Critical Pressure:   
+RMSE: 1201639.53  
+R2: 0.74  
 #### Flash Point:  
+RMSE: 23.05  
+R2: 0.88  
 
 Test results - Combined:
 
