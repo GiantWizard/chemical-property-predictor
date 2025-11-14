@@ -54,9 +54,23 @@ R2: 0.88
 Test results - Combined:
 
 #### Melting Point:  
+RMSE: 43.05  
+R2: 0.69  
 #### Boiling point:  
+RMSE: 37.46  
+R2: 0.89  
 #### Heat of Fusion:   
+RMSE: 49104.21  
+R2: 0.52  
 #### Heat of Vaporization:  
+RMSE: 97416.51  
+R2: 0.79  
 #### Critical Temperature:  
-#### Critical Pressure:   
+RMSE: 32.81  
+R2: 0.91  
+#### Critical Pressure:  
+RMSE: 1178134.01  
+R2: 0.75  
 #### Flash Point:  
+RMSE: 21.35  
+R2: 0.90  
