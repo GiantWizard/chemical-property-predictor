@@ -8,6 +8,7 @@
 #### Melting Point:  
 RMSE: 273.43  
 R2: 0.38  
+<img src="./plots/2D/melting_point.png"/>
 #### Boiling point:  
 #### Heat of Fusion:   
 #### Heat of Vaporization:  
