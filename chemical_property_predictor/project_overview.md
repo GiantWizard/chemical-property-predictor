@@ -5,30 +5,30 @@
 
 ### Test results - 2D:
 
-Melting Point:
-Boiling point:
-Heat of Fusion: 
-Heat of Vaporization:
-Critical Temperature:
-Critical Pressure: 
-Flash Point:
+Melting Point:  
+Boiling point:  
+Heat of Fusion:   
+Heat of Vaporization:  
+Critical Temperature:  
+Critical Pressure:   
+Flash Point:  
 
 ### Test results - 3D:
 
-Melting Point:
-Boiling point:
-Heat of Fusion: 
-Heat of Vaporization:
-Critical Temperature:
-Critical Pressure: 
-Flash Point:
+Melting Point:  
+Boiling point:  
+Heat of Fusion:    
+Heat of Vaporization:  
+Critical Temperature:  
+Critical Pressure:   
+Flash Point:  
 
 Test results - Combined:
 
-Melting Point:
-Boiling point:
-Heat of Fusion: 
-Heat of Vaporization:
-Critical Temperature:
-Critical Pressure: 
+Melting Point:  
+Boiling point:  
+Heat of Fusion:   
+Heat of Vaporization:  
+Critical Temperature:  
+Critical Pressure:   
 Flash Point:
