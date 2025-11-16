@@ -74,3 +74,24 @@ R2: 0.75
 #### Flash Point:  
 RMSE: 21.35  
 R2: 0.90  
+
+## 11/16/2025
+
+After performing data cleaning steps, such as removing 0 variation features, removing non-organic substances, and removing outliers via the IQR method, R2 results are as shown:
+
+#### Melting Point:  
+R2: 0.64  
+#### Boiling point:  
+R2: 0.86  
+#### Heat of Fusion:   
+R2: 0.79  
+#### Heat of Vaporization:  
+R2: 0.82  
+#### Critical Temperature:  
+R2: 0.92  
+#### Critical Pressure:  
+R2: 0.91  
+#### Flash Point:  
+R2: 0.91  
+
+As you can see the model is starting to have some actual predictive power.
