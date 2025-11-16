@@ -77,21 +77,29 @@ R2: 0.90
 
 ## 11/16/2025
 
-After performing data cleaning steps, such as removing 0 variation features, removing non-organic substances, and removing outliers via the IQR method, R2 results are as shown:
+Switched RMSE to MAPE
+After performing data cleaning steps, such as removing 0 variation features, removing non-organic substances, and removing outliers via the IQR method, R2 and MAPE results are as shown:
 
 #### Melting Point:  
-R2: 0.64  
+MAPE: 0.14  
+R2: 0.63  
 #### Boiling point:  
-R2: 0.86  
+MAPE: 0.10  
+R2: 0.86   
 #### Heat of Fusion:   
+MAPE: 0.10  
 R2: 0.79  
 #### Heat of Vaporization:  
+MAPE: 0.13  
 R2: 0.82  
 #### Critical Temperature:  
+MAPE: 0.05  
 R2: 0.92  
 #### Critical Pressure:  
+MAPE: 0.09  
 R2: 0.91  
 #### Flash Point:  
-R2: 0.91  
+MAPE: 0.06  
+R2: 0.81  
 
 As you can see the model is starting to have some actual predictive power.
