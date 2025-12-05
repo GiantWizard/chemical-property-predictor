@@ -1,1 +1,1 @@
-College portfolio n stuff
+College portfolio and stuff
