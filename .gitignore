@@ -1,0 +1,8 @@
+chemical_property_predictor/descriptors.csv
+chemical_property_predictor/catboost_info/
+chemical_property_predictor/results.csv
+chemical_property_predictor/prediction_results.png
+chemical_property_predictor/feature_importance.png
+__pycache__/
+*.pyc
+.DS_Store
