@@ -1,6 +1,6 @@
 # Chemical Property Predictor
 
-Predicts seven physical and chemical properties of organic molecules directly from molecular structure. Uses gradient-boosted trees (CatBoost) with Optuna hyperparameter tuning and a rich feature set combining RDKit 2D descriptors, Mordred 3D conformer descriptors, and Morgan fingerprints.
+Predicts seven physical and chemical properties of organic molecules directly from molecular structure. Uses gradient-boosted trees (CatBoost) with Optuna hyperparameter tuning and a feature set combining RDKit 2D descriptors, Mordred 3D conformer descriptors, and Morgan fingerprints.
 
 ## Results
 
@@ -17,23 +17,23 @@ Predicts seven physical and chemical properties of organic molecules directly fr
 ## Pipeline
 
 ### 1. Data filtering
-Inorganic compounds and salts (dot-notation SMILES) are removed, keeping only carbon-containing organic molecules (~3,300 of 4,343 compounds retained).
+Inorganic compounds and salts (dot-notation SMILES) are removed, keeping only carbon-containing organic molecules.
 
 ### 2. Feature engineering
 Three complementary feature sets are computed and concatenated (~2,400+ total features):
 
-- **RDKit 2D descriptors** (~200 features) — computed directly from SMILES: electronic, topological, and physicochemical properties
-- **Mordred 3D descriptors** — molecules are embedded as 3D conformers using MMFF/UFF geometry optimization, then 3D shape and spatial descriptors are computed
-- **Morgan fingerprints** — 2048-bit circular fingerprints (radius 2) encoding local substructure patterns
+- **RDKit 2D descriptors**: computed directly from SMILES: electronic, topological, and physicochemical properties
+- **Mordred 3D descriptors**: molecules are embedded as 3D conformers using MMFF/UFF geometry optimization, then 3D shape and spatial descriptors are computed
+- **Morgan fingerprints**: 2048-bit circular fingerprints (radius 2) encoding local substructure patterns
 
 ### 3. Preprocessing
-`VarianceThreshold` removes zero-variance features. `StandardScaler` normalizes the remaining features.
+`VarianceThreshold` removes zero-variance features. `StandardScaler` then normalizes the remaining features.
 
 ### 4. Hyperparameter tuning
 Optuna runs 50 trials per target property, searching over iterations, learning rate, tree depth, L2 regularization, and feature subsampling. Trials are evaluated on a held-out validation set.
 
 ### 5. Training and evaluation
-Final model trained with best Optuna params. Each of the seven properties is trained independently on a 70/15/15 train/val/test split. IQR-based outlier removal applied per target before training.
+The final model is then trained with best Optuna params. Each of the seven properties is trained independently on a 70/15/15 train/val/test split. IQR-based outlier removal applied per target before training.
 
 ## Dataset
 
@@ -50,15 +50,15 @@ chemical_property_predictor/physical_chemical_properties_of_organic_substances.c
 pip install catboost scikit-learn rdkit shap mordredcommunity seaborn deepchem optuna
 ```
 
-Recommended: run on Google Colab or a machine with multiple CPU cores. The 3D conformer generation step (Phase 1) takes ~20–30 minutes on Colab.
+Recommended: run on Google Colab or a machine with multiple CPU cores. The 3D conformer generation step (Phase 1) takes about 20–30 minutes on Colab.
 
 ## Usage
 
 Open `chemical_property_predictor/chemical_property_predictor.ipynb` from within the `chemical_property_predictor/` directory.
 
-**Phase 1 — descriptor computation (run once):** Cells 1–10 compute all features and cache them to `descriptors.csv`. This is the expensive step.
+**Phase 1: descriptor computation (run once):** Cells 1–10 compute all features and cache them to `descriptors.csv`. This is the expensive step.
 
-**Phase 2 — training (run per target):** Set `property_to_predict` in cell 11, then run the remaining cells. Takes ~10–15 minutes per property with Optuna tuning.
+**Phase 2: training (run per target):** Set `property_to_predict` in cell 11, then run the remaining cells. Takes around 10–15 minutes per property with Optuna tuning.
 
 ```python
 property_to_predict = 'boiling_point_K'  # swap to train a different target
@@ -76,12 +76,12 @@ Each run produces:
 
 ## Notes and future improvements
 
-**Melting point is the hardest target (R²=0.63).** Melting point depends heavily on crystal packing and intermolecular forces that molecular graph descriptors don't fully encode. This is a known challenge across the literature.
+**Melting point is the hardest target (R²=0.63).** Melting point depends heavily on crystal packing and intermolecular forces that molecular graph descriptors don't fully encode. This is apparently a known challenge across literature.
 
-**Flash point dataset is very sparse.** Only ~270 valid rows after cleaning. The R²=0.81 result is promising but should be treated cautiously given the small sample size.
+**Flash point dataset is very sparse.** Only ~270 valid rows after cleaning. While promising, the R²=0.81 result should be treated cautiously given the relatively small sample size.
 
 **Structural class features are untapped.** The dataset includes 20+ precomputed binary flags (`is_aromatic`, `is_alcohol`, `is_ketone`, etc.) that could be added as features with no extra computation cost.
 
-**Multi-task learning could help.** The seven targets are physically correlated (e.g., boiling point and critical temperature both reflect intermolecular forces). A multi-output model could exploit these correlations instead of training seven independent models.
+**Multi-task learning could help.** The seven targets are physically correlated (e.g., boiling point and critical temperature both reflect intermolecular forces). A multi-output model could exploit these correlations instead of training seven independent models. This can help significantly with speed.
 
 **Graph neural network baseline.** Message-passing networks such as Chemprop operate directly on the molecular graph without hand-crafted descriptors and tend to outperform descriptor-based models, especially on sparse targets like flash point.
