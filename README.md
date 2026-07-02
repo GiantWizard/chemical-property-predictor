@@ -37,7 +37,7 @@ The final model is then trained with best Optuna params. Each of the seven prope
 
 ## Dataset
 
-[Physical and Chemical Properties of Organic Substances](https://www.kaggle.com/datasets/ivanyakovlevg/physical-and-chemical-properties-of-substances) — 4,343 organic compounds with experimentally measured properties.
+[Physical and Chemical Properties of Organic Substances](https://www.kaggle.com/datasets/ivanyakovlevg/physical-and-chemical-properties-of-substances) -- 4,343 organic compounds with experimentally measured properties.
 
 Download the CSV and place it at:
 ```
