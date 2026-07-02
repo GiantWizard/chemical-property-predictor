@@ -50,15 +50,15 @@ chemical_property_predictor/physical_chemical_properties_of_organic_substances.c
 pip install catboost scikit-learn rdkit shap mordredcommunity seaborn deepchem optuna
 ```
 
-Recommended: run on Google Colab or a machine with multiple CPU cores. The 3D conformer generation step (Phase 1) takes about 20–30 minutes on Colab.
+Recommended: run on Google Colab or a machine with multiple CPU cores. The 3D conformer generation step (Phase 1) takes about 20-30 minutes on Colab.
 
 ## Usage
 
 Open `chemical_property_predictor/chemical_property_predictor.ipynb` from within the `chemical_property_predictor/` directory.
 
-**Phase 1: descriptor computation (run once):** Cells 1–10 compute all features and cache them to `descriptors.csv`. This is the expensive step.
+**Phase 1: descriptor computation (run once):** Cells 1-10 compute all features and cache them to `descriptors.csv`. This is the expensive step.
 
-**Phase 2: training (run per target):** Set `property_to_predict` in cell 11, then run the remaining cells. Takes around 10–15 minutes per property with Optuna tuning.
+**Phase 2: training (run per target):** Set `property_to_predict` in cell 11, then run the remaining cells. Takes around 10-15 minutes per property with Optuna tuning.
 
 ```python
 property_to_predict = 'boiling_point_K'  # swap to train a different target
