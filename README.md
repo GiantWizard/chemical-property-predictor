@@ -1,6 +1,6 @@
 # Chemical Property Predictor
 
-Predicts seven physical and chemical properties of organic molecules directly from molecular structure. Uses gradient-boosted trees (CatBoost) with Optuna hyperparameter tuning and a feature set combining RDKit 2D descriptors, Mordred 3D conformer descriptors, and Morgan fingerprints.
+Predicts seven physical and chemical properties of organic molecules straight from their molecular structure. It uses gradient-boosted trees (CatBoost), tuned with Optuna, and learns from a feature set that combines RDKit 2D descriptors, Mordred 3D conformer descriptors, and Morgan fingerprints.
 
 ## Results
 
@@ -17,27 +17,27 @@ Predicts seven physical and chemical properties of organic molecules directly fr
 ## Pipeline
 
 ### 1. Data filtering
-Inorganic compounds and salts (dot-notation SMILES) are removed, keeping only carbon-containing organic molecules.
+Inorganic compounds and salts are removed, keeping only carbon-containing organic molecules. Salts show up as a "." in their SMILES string, marking two disconnected pieces in one structure, so that pattern is used to filter them out.
 
 ### 2. Feature engineering
-Three complementary feature sets are computed and concatenated (~2,400+ total features):
+Three different feature sets are computed for each molecule and concatenated into one table (about 2,400 total features):
 
-- **RDKit 2D descriptors**: computed directly from SMILES: electronic, topological, and physicochemical properties
-- **Mordred 3D descriptors**: molecules are embedded as 3D conformers using MMFF/UFF geometry optimization, then 3D shape and spatial descriptors are computed
-- **Morgan fingerprints**: 2048-bit circular fingerprints (radius 2) encoding local substructure patterns
+- **RDKit 2D descriptors**: calculated straight from the SMILES string, covering electronic, topological, and physical properties of the molecule
+- **Mordred 3D descriptors**: each molecule is first given an estimated 3D shape through MMFF/UFF geometry optimization, a method that arranges its atoms in space to roughly minimize energy, and then 3D shape and spatial descriptors are computed from that shape
+- **Morgan fingerprints**: 2048-bit circular fingerprints (radius 2) that encode which small substructures surround each atom
 
 ### 3. Preprocessing
-`VarianceThreshold` removes zero-variance features. `StandardScaler` then normalizes the remaining features.
+`VarianceThreshold` drops any feature that has the same value across every molecule, since a feature like that carries no information. `StandardScaler` then rescales what's left so every feature sits on a comparable numeric range.
 
 ### 4. Hyperparameter tuning
-Optuna runs 50 trials per target property, searching over iterations, learning rate, tree depth, L2 regularization, and feature subsampling. Trials are evaluated on a held-out validation set.
+Optuna runs 50 trials per target property, searching over the number of boosting iterations, the learning rate, tree depth, L2 regularization strength (a penalty that keeps the model from overfitting to noise), and how much of the feature set each tree samples. Every trial is scored against a held-out validation set.
 
 ### 5. Training and evaluation
-The final model is then trained with best Optuna params. Each of the seven properties is trained independently on a 70/15/15 train/val/test split. IQR-based outlier removal applied per target before training.
+Each property's final model is retrained using the best parameters Optuna found for it. All seven properties are trained independently on their own 70/15/15 train/validation/test split, and outliers, meaning values far outside the normal range for that property, are removed using the IQR method before training begins.
 
 ## Dataset
 
-[Physical and Chemical Properties of Organic Substances](https://www.kaggle.com/datasets/ivanyakovlevg/physical-and-chemical-properties-of-substances) -- 4,343 organic compounds with experimentally measured properties.
+[Physical and Chemical Properties of Organic Substances](https://www.kaggle.com/datasets/ivanyakovlevg/physical-and-chemical-properties-of-substances): 4,343 organic compounds with experimentally measured properties.
 
 Download the CSV and place it at:
 ```
@@ -50,13 +50,13 @@ chemical_property_predictor/physical_chemical_properties_of_organic_substances.c
 pip install catboost scikit-learn rdkit shap mordredcommunity seaborn deepchem optuna
 ```
 
-Recommended: run on Google Colab or a machine with multiple CPU cores. The 3D conformer generation step (Phase 1) takes about 20-30 minutes on Colab.
+Recommended: run this on Google Colab or a machine with several CPU cores, since the 3D conformer generation step in Phase 1 takes about 20-30 minutes on Colab.
 
 ## Usage
 
 Open `chemical_property_predictor/chemical_property_predictor.ipynb` from within the `chemical_property_predictor/` directory.
 
-**Phase 1: descriptor computation (run once):** Cells 1-10 compute all features and cache them to `descriptors.csv`. This is the expensive step.
+**Phase 1: descriptor computation (run once):** Cells 1-10 compute all features and cache them to `descriptors.csv`. This is the slow step.
 
 **Phase 2: training (run per target):** Set `property_to_predict` in cell 11, then run the remaining cells. Takes around 10-15 minutes per property with Optuna tuning.
 
@@ -76,12 +76,12 @@ Each run produces:
 
 ## Notes and future improvements
 
-**Melting point is the hardest target (R²=0.63).** Melting point depends heavily on crystal packing and intermolecular forces that molecular graph descriptors don't fully encode. This is apparently a known challenge across literature.
+**Melting point is the hardest target (R²=0.63).** Melting point depends heavily on crystal packing and intermolecular forces, and molecular graph descriptors don't fully capture either of those. Other papers on this kind of prediction run into the same wall, so it looks like a limitation of the approach rather than something specific to this dataset.
 
-**Flash point dataset is very sparse.** Only ~270 valid rows after cleaning. While promising, the R²=0.81 result should be treated cautiously given the relatively small sample size.
+**The flash point dataset is very sparse.** Only about 270 valid rows survive after cleaning. The R²=0.81 result is promising, but given how small that sample is, it should be treated as a rough signal rather than a settled number.
 
-**Structural class features are untapped.** The dataset includes 20+ precomputed binary flags (`is_aromatic`, `is_alcohol`, `is_ketone`, etc.) that could be added as features with no extra computation cost.
+**Structural class features are still untapped.** The dataset includes more than 20 precomputed binary flags, things like `is_aromatic`, `is_alcohol`, and `is_ketone`, that could be added as features at no extra computation cost.
 
-**Multi-task learning could help.** The seven targets are physically correlated (e.g., boiling point and critical temperature both reflect intermolecular forces). A multi-output model could exploit these correlations instead of training seven independent models. This can help significantly with speed.
+**Multi-task learning could help.** The seven targets are physically correlated (boiling point and critical temperature, for instance, both reflect intermolecular forces), so a single multi-output model could exploit those correlations instead of training seven separate models. It would also be much faster to train one model than seven.
 
-**Graph neural network baseline.** Message-passing networks such as Chemprop operate directly on the molecular graph without hand-crafted descriptors and tend to outperform descriptor-based models, especially on sparse targets like flash point.
+**A graph neural network baseline is worth trying.** Message-passing networks such as Chemprop operate directly on the molecular graph instead of relying on hand-crafted descriptors, and they tend to outperform descriptor-based models, especially on sparse targets like flash point.
