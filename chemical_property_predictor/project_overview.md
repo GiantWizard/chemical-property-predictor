@@ -103,3 +103,5 @@ MAPE: 0.06
 R2: 0.81  
 
 As you can see the model is starting to have some actual predictive power.
+
+Correction: the melting point and flash point R2 figures above were from an intermediate run. The final reported figures for these two properties are R2: 0.674 (melting point) and R2: 0.843 (flash point), as reflected in the README results table.

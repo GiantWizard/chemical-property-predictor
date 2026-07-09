@@ -1,8 +1,12 @@
 # Chemical Property Predictor
 
-Predicts seven physical and chemical properties of organic molecules straight from their molecular structure. It uses gradient-boosted trees (CatBoost), tuned with Optuna, and learns from a feature set that combines RDKit 2D descriptors, Mordred 3D conformer descriptors, and Morgan fingerprints.
+Predicts seven physical and chemical properties of organic molecules straight from their molecular structure. It uses gradient-boosted trees (CatBoost), tuned with Optuna, and learns from a feature set that combines RDKit 2D descriptors and Morgan fingerprints.
+
+An earlier version of this pipeline also computed Mordred 3D conformer descriptors, but that step was dropped after running into a multiprocessing bug, and the current notebook does not include it.
 
 ## Results
+
+The numbers below are the most recent reported results, but the notebook in this repo has not been re-executed since the last edits (see the Usage section), so they have not been reverified against the current code and should be treated as not yet confirmed until the notebook is rerun end to end.
 
 | Property | n | R² | MAPE | RMSE |
 |---|---|---|---|---|
@@ -20,17 +24,18 @@ Predicts seven physical and chemical properties of organic molecules straight fr
 Inorganic compounds and salts are removed, keeping only carbon-containing organic molecules. Salts show up as a "." in their SMILES string, marking two disconnected pieces in one structure, so that pattern is used to filter them out.
 
 ### 2. Feature engineering
-Three different feature sets are computed for each molecule and concatenated into one table (about 2,400 total features):
+Two feature sets are computed for each molecule and concatenated into one table:
 
 - **RDKit 2D descriptors**: calculated straight from the SMILES string, covering electronic, topological, and physical properties of the molecule
-- **Mordred 3D descriptors**: each molecule is first given an estimated 3D shape through MMFF/UFF geometry optimization, a method that arranges its atoms in space to roughly minimize energy, and then 3D shape and spatial descriptors are computed from that shape
 - **Morgan fingerprints**: 2048-bit circular fingerprints (radius 2) that encode which small substructures surround each atom
+
+3D conformer descriptors (via Mordred) were tried at an earlier stage of this project but dropped because of a multiprocessing bug in the geometry optimization step. They are not part of the current pipeline.
 
 ### 3. Preprocessing
 `VarianceThreshold` drops any feature that has the same value across every molecule, since a feature like that carries no information. `StandardScaler` then rescales what's left so every feature sits on a comparable numeric range.
 
 ### 4. Hyperparameter tuning
-Optuna runs 50 trials per target property, searching over the number of boosting iterations, the learning rate, tree depth, L2 regularization strength (a penalty that keeps the model from overfitting to noise), and how much of the feature set each tree samples. Every trial is scored against a held-out validation set.
+Optuna runs 15 trials per target property, searching over the number of boosting iterations, the learning rate, tree depth, L2 regularization strength (a penalty that keeps the model from overfitting to noise), and how much of the feature set each tree samples. Every trial is scored against a held-out validation set.
 
 ### 5. Training and evaluation
 Each property's final model is retrained using the best parameters Optuna found for it. All seven properties are trained independently on their own 70/15/15 train/validation/test split, and outliers, meaning values far outside the normal range for that property, are removed using the IQR method before training begins.
@@ -47,10 +52,10 @@ chemical_property_predictor/physical_chemical_properties_of_organic_substances.c
 ## Setup
 
 ```bash
-pip install catboost scikit-learn rdkit shap mordredcommunity seaborn deepchem optuna
+pip install catboost scikit-learn rdkit seaborn optuna
 ```
 
-Recommended: run this on Google Colab or a machine with several CPU cores, since the 3D conformer generation step in Phase 1 takes about 20-30 minutes on Colab.
+Recommended: run this on Google Colab or a machine with several CPU cores, since descriptor computation in Phase 1 can take a while on the full dataset.
 
 ## Usage
 
@@ -76,9 +81,9 @@ Each run produces:
 
 ## Notes and future improvements
 
-**Melting point is the hardest target (R²=0.63).** Melting point depends heavily on crystal packing and intermolecular forces, and molecular graph descriptors don't fully capture either of those. Other papers on this kind of prediction run into the same wall, so it looks like a limitation of the approach rather than something specific to this dataset.
+**Melting point is the hardest target (R²=0.674, per the results table above).** Melting point depends heavily on crystal packing and intermolecular forces, and molecular graph descriptors don't fully capture either of those. Other papers on this kind of prediction run into the same wall, so it looks like a limitation of the approach rather than something specific to this dataset.
 
-**The flash point dataset is very sparse.** Only about 270 valid rows survive after cleaning. The R²=0.81 result is promising, but given how small that sample is, it should be treated as a rough signal rather than a settled number.
+**The flash point dataset is very sparse.** Only about 270 valid rows survive after cleaning. The R²=0.843 result in the table above is promising, but given how small that sample is, it should be treated as a rough signal rather than a settled number.
 
 **Structural class features are still untapped.** The dataset includes more than 20 precomputed binary flags, things like `is_aromatic`, `is_alcohol`, and `is_ketone`, that could be added as features at no extra computation cost.
 
