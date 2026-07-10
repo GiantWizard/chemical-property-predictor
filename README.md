@@ -6,17 +6,17 @@ I tried adding Mordred 3D conformer descriptors early on, but the geometry-optim
 
 ## Results
 
-The numbers below are the most recent reported results, but the notebook in this repo has not been re-executed since the last edits (see the Usage section), so they have not been reverified against the current code and should be treated as not yet confirmed until the notebook is rerun end to end.
+The numbers below come from a single end-to-end rerun of the notebook after the pipeline change described above (Mordred removal, Optuna trials cut to 15). Optuna is unseeded, so a subsequent rerun may land a few percent off these exact figures.
 
 | Property | n | R² | MAPE | RMSE |
 |---|---|---|---|---|
-| Melting point (K) | 3175 | 0.674 | 0.142 | 70.6 |
-| Boiling point (K) | 2922 | 0.827 | 0.100 | 107.3 |
-| Heat of fusion (J/mol) | 2728 | 0.852 | 0.072 | 13009 |
-| Heat of vaporization (J/mol) | 1403 | 0.755 | 0.143 | 56752 |
-| Critical temperature (K) | 2846 | 0.939 | 0.045 | 66.6 |
-| Critical pressure (Pa) | 2950 | 0.920 | 0.079 | 410057 |
-| Flash point (K) | 267 | 0.843 | 0.055 | 26.6 |
+| Melting point (K) | 3175 | 0.647 | 0.149 | 73.4 |
+| Boiling point (K) | 2922 | 0.831 | 0.098 | 106.0 |
+| Heat of fusion (J/mol) | 2728 | 0.837 | 0.077 | 13642 |
+| Heat of vaporization (J/mol) | 1403 | 0.734 | 0.157 | 59069 |
+| Critical temperature (K) | 2846 | 0.936 | 0.048 | 68.3 |
+| Critical pressure (Pa) | 2950 | 0.924 | 0.075 | 398634 |
+| Flash point (K) | 267 | 0.801 | 0.060 | 29.9 |
 
 ## Pipeline
 
@@ -81,9 +81,9 @@ Each run produces:
 
 ## Notes and future improvements
 
-**Melting point is the hardest target (R²=0.674, per the results table above).** Melting point depends heavily on crystal packing and intermolecular forces, and molecular graph descriptors don't fully capture either of those. Other papers on this kind of prediction run into the same wall, so it looks like a limitation of the approach rather than something specific to this dataset.
+**Melting point is the hardest target (R²=0.647, per the results table above).** Melting point depends heavily on crystal packing and intermolecular forces, and molecular graph descriptors don't fully capture either of those. Other papers on this kind of prediction run into the same wall, so it looks like a limitation of the approach rather than something specific to this dataset.
 
-**The flash point dataset is very sparse.** Only about 270 valid rows survive after cleaning. The R²=0.843 result in the table above is promising, but given how small that sample is, it should be treated as a rough signal rather than a settled number.
+**The flash point dataset is very sparse.** Only about 270 valid rows survive after cleaning. The R²=0.801 result in the table above is promising, but given how small that sample is, it should be treated as a rough signal rather than a settled number.
 
 **Structural class features are still untapped.** The dataset includes more than 20 precomputed binary flags, things like `is_aromatic`, `is_alcohol`, and `is_ketone`, that could be added as features at no extra computation cost.
 
