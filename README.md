@@ -1,8 +1,8 @@
 # Chemical Property Predictor
 
-Predicts seven physical and chemical properties of organic molecules straight from their molecular structure. It uses gradient-boosted trees (CatBoost), tuned with Optuna, and learns from a feature set that combines RDKit 2D descriptors and Morgan fingerprints.
+Given a molecule's structure, this predicts seven of its physical and chemical properties. The model is CatBoost, tuned with Optuna, trained on RDKit 2D descriptors plus Morgan fingerprints.
 
-An earlier version of this pipeline also computed Mordred 3D conformer descriptors, but that step was dropped after running into a multiprocessing bug, and the current notebook does not include it.
+I tried adding Mordred 3D conformer descriptors early on, but the geometry-optimization step kept hitting a multiprocessing bug, so that part got cut and the current notebook runs without it.
 
 ## Results
 
